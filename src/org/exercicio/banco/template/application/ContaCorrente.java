@@ -1,4 +1,4 @@
-package org.exercicio.banco.template.model;
+package org.exercicio.banco.template.application;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -9,24 +9,22 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 
+import org.exercicio.banco.template.model.ContaPoupanca;
+import org.exercicio.banco.template.model.IConta;
+import org.exercicio.banco.template.model.RegistroTransacao;
 import org.exercicio.banco.template.model.enumerator.TipoTransacao;
-import org.exercicio.banco.template.persistence.PersistenciaEmArquivo;
 
-public class ContaBancaria implements Serializable {
+public class ContaCorrente implements Serializable, IConta {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private Integer numeroConta;
 	private BigDecimal saldo;
 	private LocalDateTime dataAbertura;
 	private boolean status;
 	private List<RegistroTransacao> transacoes;
-	private List<Conta> contas;
    
 	
-	public ContaBancaria() {
+	public ContaCorrente() {
 		this.numeroConta = new Random().nextInt(999999999);
 		this.saldo = BigDecimal.ZERO;
 		saldo.setScale(4, RoundingMode.HALF_UP);
@@ -48,7 +46,7 @@ public class ContaBancaria implements Serializable {
 		return saldo;
 	}
 
-	private void setSaldo(BigDecimal saldo) {
+	public void setSaldo(BigDecimal saldo) {
 		this.saldo = saldo;
 	}
 
@@ -56,9 +54,6 @@ public class ContaBancaria implements Serializable {
 		return dataAbertura;
 	}
 
-	private void setDataAbertura(LocalDateTime dataAbertura) {
-		this.dataAbertura = dataAbertura;
-	}
 
 	public boolean isStatus() {
 		return status;
@@ -86,13 +81,13 @@ public class ContaBancaria implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ContaBancaria other = (ContaBancaria) obj;
+		ContaCorrente other = (ContaCorrente) obj;
 		return Objects.equals(numeroConta, other.numeroConta);
 	}
 
 	@Override
 	public String toString() {
-		return "ContaBancaria [numeroConta=" + numeroConta + ", saldo=" + saldo + ", dataAbertura=" + dataAbertura
+		return "ContaCorrente [numeroConta=" + numeroConta + ", saldo=" + saldo + ", dataAbertura=" + dataAbertura
 				+ ", status=" + status + "]";
 	}
 
@@ -132,7 +127,9 @@ public class ContaBancaria implements Serializable {
 
 	}
 
-	public void transferir(ContaBancaria c, BigDecimal quantia) {
+	
+	
+	public void transferir(IConta c, BigDecimal quantia) {
 		if (status && c.isStatus()) {
 			if (quantia.compareTo(BigDecimal.ZERO) < 0) {
 				System.err.println("Valor invalido para transferencia.");
@@ -160,12 +157,9 @@ public class ContaBancaria implements Serializable {
 	        }
 	     }
 
-	public List<Conta> getContas() {
-		return contas;
+	public List<RegistroTransacao> transacoes() {
+		// TODO Auto-generated method stub
+		return null;
 	}
-
-	public void setContas(List<Conta> contas) {
-		this.contas = contas;
-	}
-
+	
 }

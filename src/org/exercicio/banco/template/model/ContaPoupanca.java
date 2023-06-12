@@ -1,22 +1,29 @@
 package org.exercicio.banco.template.model;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 
 import org.exercicio.banco.template.model.enumerator.TipoTransacao;
+import org.exercicio.banco.template.persistence.PersistenciaEmArquivo;
 
-public class ContaPoupanca implements Conta{
-	
+public class ContaPoupanca implements  Serializable, IConta {
+
+	/**
+	 * 
+	 */
 	private static final long serialVersionUID = 1L;
 	private Integer numeroConta;
 	private BigDecimal saldo;
 	private LocalDateTime dataAbertura;
 	private boolean status;
 	private List<RegistroTransacao> transacoes;
+   
 	
 	public ContaPoupanca() {
 		this.numeroConta = new Random().nextInt(999999999);
@@ -25,8 +32,66 @@ public class ContaPoupanca implements Conta{
 		this.dataAbertura = LocalDateTime.now();
 		this.status = true;
 		transacoes = new ArrayList<>();
+		
 	}
+
+	public Integer getNumeroConta() {
+		return numeroConta;
+	}
+
+	public void setNumeroConta(Integer numeroConta) {
+		this.numeroConta = numeroConta;
+	}
+
+	public BigDecimal getSaldo() {
+		return saldo;
+	}
+
+	public void setSaldo(BigDecimal saldo) {
+		this.saldo = saldo;
+	}
+
+	public LocalDateTime getDataAbertura() {
+		return dataAbertura;
+	}
+
+
+	public boolean isStatus() {
+		return status;
+	}
+
+	public void setStatus(boolean status) {
+		this.status = status;
+	}
+
+	public List<RegistroTransacao> getTransacoes() {
+		return transacoes;
+	}
+
+
 	@Override
+	public int hashCode() {
+		return Objects.hash(numeroConta);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ContaPoupanca other = (ContaPoupanca) obj;
+		return Objects.equals(numeroConta, other.numeroConta);
+	}
+
+	@Override
+	public String toString() {
+		return "Conta Poupança [numeroConta=" + numeroConta + ", saldo=" + saldo + ", dataAbertura=" + dataAbertura
+				+ ", status=" + status + "]";
+	}
+
 	public void depositar(BigDecimal quantia) {
 		if (status) {
 			if (quantia.compareTo(BigDecimal.ZERO) > 0) {
@@ -42,9 +107,8 @@ public class ContaPoupanca implements Conta{
 
 		}
 
-		
 	}
-	@Override
+
 	public void sacar(BigDecimal quantia) {
 		if (status) {
 			if (quantia.compareTo(BigDecimal.ZERO) > 0) {
@@ -62,70 +126,42 @@ public class ContaPoupanca implements Conta{
 			System.err.println("Operação não permitida. Conta desativada.");
 		}
 
-		
 	}
+
+	
+	
+	public void transferir(IConta c, BigDecimal quantia) {
+		if (status && c.isStatus()) {
+			if (quantia.compareTo(BigDecimal.ZERO) < 0) {
+				System.err.println("Valor invalido para transferencia.");
+			} else if (quantia.compareTo(saldo) <= 0) {
+				setSaldo(saldo.subtract(quantia));
+				c.setSaldo(c.getSaldo().add(quantia));
+				c.transacoes.add(new RegistroTransacao(quantia, TipoTransacao.TRANSACAO_CREDITO, LocalDateTime.now()));
+				transacoes.add(new RegistroTransacao(quantia, TipoTransacao.TRANSACAO_DEBITO, LocalDateTime.now()));
+				System.out.println("Tranferencia realizada com sucesso.");
+			} else
+				System.err.println("Saldo insuficiente para realizar a transferencia.");
+		} else {
+			System.err.println("Operacao nao pode ser realizada entre contas desativadas.");
+		}
+
+	}
+	
+	public void imprimirExtratoConta(int mes, int year) {
+		 System.out.println("Extrato da conta: " + numeroConta +".");
+	        System.out.println("Data\t\tTipo\t\tValor");
+	        for (RegistroTransacao transacao : transacoes) {
+	            if (transacao.getData().getMonthValue() == mes && transacao.getData().getYear() == year) {
+	                System.out.println(transacao.getData() + "\t" + transacao.getTipo() + "\t\t" + transacao.getValor());
+	            }
+	        }
+	     }
+
 	@Override
-	public void transferir(BigDecimal quantia, ContaBancaria c) {
+	public List<RegistroTransacao> transacoes() {
 		// TODO Auto-generated method stub
-		
+		return null;
 	}
-	@Override
-	public double getSaldo() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-	/**
-	 * @return the numeroConta
-	 */
-	public Integer getNumeroConta() {
-		return numeroConta;
-	}
-	/**
-	 * @param numeroConta the numeroConta to set
-	 */
-	public void setNumeroConta(Integer numeroConta) {
-		this.numeroConta = numeroConta;
-	}
-	/**
-	 * @return the dataAbertura
-	 */
-	public LocalDateTime getDataAbertura() {
-		return dataAbertura;
-	}
-	/**
-	 * @param dataAbertura the dataAbertura to set
-	 */
-	public void setDataAbertura(LocalDateTime dataAbertura) {
-		this.dataAbertura = dataAbertura;
-	}
-	/**
-	 * @return the status
-	 */
-	public boolean isStatus() {
-		return status;
-	}
-	/**
-	 * @param status the status to set
-	 */
-	public void setStatus(boolean status) {
-		this.status = status;
-	}
-	/**
-	 * @return the transacoes
-	 */
-	public List<RegistroTransacao> getTransacoes() {
-		return transacoes;
-	}
-	/**
-	 * @param transacoes the transacoes to set
-	 */
-	public void setTransacoes(List<RegistroTransacao> transacoes) {
-		this.transacoes = transacoes;
-	}
-	/**
-	 * @param saldo the saldo to set
-	 */
-	public void setSaldo(BigDecimal saldo) {
-		this.saldo = saldo;
-	}
+
 }
