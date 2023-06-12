@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Scanner;
 
 import org.exercicio.banco.template.model.Cliente;
+import org.exercicio.banco.template.model.ContaCorrente;
 import org.exercicio.banco.template.model.ContaPoupanca;
 import org.exercicio.banco.template.model.IConta;
 import org.exercicio.banco.template.model.RegistroTransacao;

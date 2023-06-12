@@ -1,4 +1,4 @@
-package org.exercicio.banco.template.application;
+package org.exercicio.banco.template.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -9,9 +9,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 
-import org.exercicio.banco.template.model.ContaPoupanca;
-import org.exercicio.banco.template.model.IConta;
-import org.exercicio.banco.template.model.RegistroTransacao;
 import org.exercicio.banco.template.model.enumerator.TipoTransacao;
 
 public class ContaCorrente implements Serializable, IConta {
