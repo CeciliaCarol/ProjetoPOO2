@@ -10,7 +10,6 @@ import java.util.Objects;
 import java.util.Random;
 
 import org.exercicio.banco.template.model.enumerator.TipoTransacao;
-import org.exercicio.banco.template.persistence.PersistenciaEmArquivo;
 
 public class ContaPoupanca implements  Serializable, IConta {
 
@@ -131,17 +130,25 @@ public class ContaPoupanca implements  Serializable, IConta {
 	
 	
 	public void transferir(IConta c, BigDecimal quantia) {
+		BigDecimal taxa = BigDecimal.ZERO;
+		BigDecimal taxaPorcentagem = new BigDecimal("0.02");
+		
 		if (status && c.isStatus()) {
 			if (quantia.compareTo(BigDecimal.ZERO) < 0) {
 				System.err.println("Valor invalido para transferencia.");
-			} else if (quantia.compareTo(saldo) <= 0) {
-				setSaldo(saldo.subtract(quantia));
+			} else {
+				if (c instanceof ContaCorrente) {
+					taxa = quantia.multiply(taxaPorcentagem);
+			} if (quantia.compareTo(saldo.add(taxa)) <= 0) {
+				setSaldo(saldo.subtract(quantia).subtract(taxa));
 				c.setSaldo(c.getSaldo().add(quantia));
-				c.transacoes.add(new RegistroTransacao(quantia, TipoTransacao.TRANSACAO_CREDITO, LocalDateTime.now()));
+				c.getTransacoes().add(new RegistroTransacao(quantia, TipoTransacao.TRANSACAO_CREDITO, LocalDateTime.now()));
 				transacoes.add(new RegistroTransacao(quantia, TipoTransacao.TRANSACAO_DEBITO, LocalDateTime.now()));
 				System.out.println("Tranferencia realizada com sucesso.");
-			} else
+			} else {
 				System.err.println("Saldo insuficiente para realizar a transferencia.");
+			  }
+			}
 		} else {
 			System.err.println("Operacao nao pode ser realizada entre contas desativadas.");
 		}
@@ -157,11 +164,5 @@ public class ContaPoupanca implements  Serializable, IConta {
 	            }
 	        }
 	     }
-
-	@Override
-	public List<RegistroTransacao> transacoes() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 }

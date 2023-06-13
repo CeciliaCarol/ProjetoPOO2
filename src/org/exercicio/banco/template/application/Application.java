@@ -181,10 +181,10 @@ public class Application {
 					System.out.println("Digite o numero da conta:");
 					int numeroConta = scanner.nextInt();
 					IConta conta1 = cliente.localizarContaNumero(numeroConta);
-				     if (conta1.transacoes().size() == 0) {
+				     if (conta1.getTransacoes().size() == 0) {
 				       System.out.println("Sem transa");
 				     } else {
-				    	 for (RegistroTransacao transacaos : conta1.transacoes()) {
+				    	 for (RegistroTransacao transacaos : conta1.getTransacoes()) {
 				    		 System.out.println(transacaos);
 				    	 }
 				     }

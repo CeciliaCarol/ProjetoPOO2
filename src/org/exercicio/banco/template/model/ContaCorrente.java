@@ -125,25 +125,32 @@ public class ContaCorrente implements Serializable, IConta {
 	}
 
 	
-	
-	public void transferir(IConta c, BigDecimal quantia) {
-		if (status && c.isStatus()) {
-			if (quantia.compareTo(BigDecimal.ZERO) < 0) {
-				System.err.println("Valor invalido para transferencia.");
-			} else if (quantia.compareTo(saldo) <= 0) {
-				setSaldo(saldo.subtract(quantia));
-				c.setSaldo(c.getSaldo().add(quantia));
-				c.transacoes.add(new RegistroTransacao(quantia, TipoTransacao.TRANSACAO_CREDITO, LocalDateTime.now()));
-				transacoes.add(new RegistroTransacao(quantia, TipoTransacao.TRANSACAO_DEBITO, LocalDateTime.now()));
-				System.out.println("Tranferencia realizada com sucesso.");
-			} else
-				System.err.println("Saldo insuficiente para realizar a transferencia.");
-		} else {
-			System.err.println("Operacao nao pode ser realizada entre contas desativadas.");
+		public void transferir(IConta c, BigDecimal quantia) {
+			BigDecimal taxa = BigDecimal.ZERO;
+			BigDecimal taxaPorcentagem = new BigDecimal("0.04");
+			
+			if (status && c.isStatus()) {
+				if (quantia.compareTo(BigDecimal.ZERO) < 0) {
+					System.err.println("Valor invalido para transferencia.");
+				} else {
+					if (c instanceof ContaPoupanca) {
+						taxa = quantia.multiply(taxaPorcentagem);
+				} if (quantia.compareTo(saldo.add(taxa)) <= 0) {
+					setSaldo(saldo.subtract(quantia).subtract(taxa));
+					c.setSaldo(c.getSaldo().add(quantia));
+					c.getTransacoes().add(new RegistroTransacao(quantia, TipoTransacao.TRANSACAO_CREDITO, LocalDateTime.now()));
+					transacoes.add(new RegistroTransacao(quantia, TipoTransacao.TRANSACAO_DEBITO, LocalDateTime.now()));
+					System.out.println("Tranferencia realizada com sucesso.");
+				} else {
+					System.err.println("Saldo insuficiente para realizar a transferencia.");
+				  }
+				}
+			} else {
+				System.err.println("Operacao nao pode ser realizada entre contas desativadas.");
+			}
 		}
-
-	}
-	
+		
+		
 	public void imprimirExtratoConta(int mes, int year) {
 		 System.out.println("Extrato da conta: " + numeroConta +".");
 	        System.out.println("Data\t\tTipo\t\tValor");
@@ -154,9 +161,5 @@ public class ContaCorrente implements Serializable, IConta {
 	        }
 	     }
 
-	public List<RegistroTransacao> transacoes() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
+
 }

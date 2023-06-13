@@ -78,7 +78,7 @@ public class Cliente implements Serializable{
     		}else {
     			this.contas.add(c);
     			PersistenciaEmArquivo.getInstance().salvarDadosEmArquivo();
-    			System.out.print("Conta adicionada com sucesso!");
+    			System.out.print("Conta adicionada com sucesso!\n");
     		}
     }
 
@@ -100,11 +100,11 @@ public class Cliente implements Serializable{
 			IConta c = contas.get(i);
 
 			if (c.getNumeroConta() == numero) {
-				System.out.print("Conta encontrada!");
+				System.out.print("Conta encontrada!\n");
 				return c;
 			}
 		}
-		System.out.print("Conta nao encontrada.");
+		System.out.print("Conta nao encontrada.\n");
 		return null;
     }
 

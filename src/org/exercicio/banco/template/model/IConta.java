@@ -15,7 +15,7 @@ public interface IConta {
 	public void sacar(BigDecimal quantia);
 	public boolean isStatus();
 	public void setSaldo(BigDecimal add);
-	public List<RegistroTransacao> transacoes();
+	public List<RegistroTransacao> getTransacoes();
 	
 	
 	
